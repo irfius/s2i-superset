@@ -8,7 +8,7 @@ if [ "$(ls /tmp/s2i/artifacts/ 2>/dev/null)" ]; then
 fi
 
 # move the application source
-mv /tmp/src/* $HOME/src
+mv /tmp/src/* $HOME/*
 
 
 
