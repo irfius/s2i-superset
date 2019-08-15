@@ -70,6 +70,7 @@ psycopg2==2.8.3
 PyAthena==1.7.1
 pycparser==2.19
 pydruid==0.5.6
+pyhdb==0.3.4
 PyHive==0.6.1
 PyJWT==1.7.1
 pyrsistent==0.15.4
@@ -87,6 +88,7 @@ simplejson==3.16.0
 six==1.12.0
 SQLAlchemy==1.2.18
 sqlalchemy-clickhouse==0.1.5.post0
+sqlalchemy-hana==0.4.0
 sqlalchemy-redshift==0.7.3
 SQLAlchemy-Utils==0.34.1
 sqlparse==0.3.0
