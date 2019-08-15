@@ -9,7 +9,11 @@ fi
 
 # move the application source
 mv /tmp/src/* $HOME/
+
+# set up environment
 python3 -m venv .venv
 source .venv/bin/activate
+pip install -U pip
+ls -la
 
 echo "---> Assemble END"
