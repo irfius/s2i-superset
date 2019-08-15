@@ -8,7 +8,8 @@ if [ "$(ls /tmp/s2i/artifacts/ 2>/dev/null)" ]; then
 fi
 
 # move the application source
-ls /tmp/src/
 mv /tmp/src/* $HOME/
+python3 -m venv .venv
+source .venv/bin/activate
 
 echo "---> Assemble END"
