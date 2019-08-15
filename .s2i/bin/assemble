@@ -2,9 +2,13 @@
 
 echo "---> Assemble START"
 
+# restore build artifacts
+if [ "$(ls /tmp/s2i/artifacts/ 2>/dev/null)" ]; then
+    mv /tmp/artifacts/* $HOME/
+fi
+
 # move the application source
-echo "runnin"
-
-
+ls /tmp/src/
+mv /tmp/src/* $HOME/
 
 echo "---> Assemble END"
