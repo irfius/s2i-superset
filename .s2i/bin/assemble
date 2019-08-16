@@ -19,6 +19,7 @@ source .venv/bin/activate
 pip install -U pip
 pip install -r requirements.txt
 pip install -r requirements-mssql.txt
+rm -rf .cache
 
 # uninstall application deps
 yum -y remove postgresql-develmysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-sasl-devel python36-devel
