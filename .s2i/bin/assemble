@@ -22,7 +22,8 @@ pip install -r requirements-mssql.txt
 rm -rf .cache
 
 # uninstall application deps
-yum -y remove postgresql-devel emysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-sasl-devel python36-devel
-yum -y clean all
+yum -y remove postgresql-devel emysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-sasl-devel python36-devel \
+    centos-release-scl epel-release
+yum -y clean all --enablerepo='*'
 
 echo "---> Assemble END"
