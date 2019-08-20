@@ -8,6 +8,7 @@ if [ "$(ls /tmp/s2i/artifacts/ 2>/dev/null)" ]; then
 fi
 
 # move the application source
+chmod +x /tmp/src/*
 mv /tmp/src/* $HOME/
 
 # install application deps
