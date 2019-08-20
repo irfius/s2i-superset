@@ -15,16 +15,16 @@ yum -y install postgresql-devel	mysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-s
 
 # set up environment
 python3 -m venv .venv
-source .venv/bin/activate
-pip install -U pip
-pip install -r requirements.txt
-pip install -r requirements-mssql.txt
-rm -rf .cache
-export LC_ALL=en_US.utf8
-export FLASK_APP=superset
+source .venv/bin/activate && \
+    pip install -U pip && \
+    pip install -r requirements.txt && \
+    pip install -r requirements-mssql.txt && \
+    rm -rf .cache && \
+    export LC_ALL=en_US.utf8 && \
+    export FLASK_APP=superset
 
 # uninstall application deps
-yum -y remove postgresql-devel emysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-sasl-devel python36-devel
-yum -y clean all
+yum -y remove postgresql-devel emysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-sasl-devel python36-devel && \
+    yum -y clean all
 
 echo "---> Assemble END"
