@@ -20,8 +20,7 @@ source .venv/bin/activate && \
     pip install -r requirements.txt && \
     pip install -r requirements-mssql.txt && \
     rm -rf .cache && \
-    echo export LC_ALL=en_US.utf8 && \
-    echo export FLASK_APP=superset
+    source ./envs
 
 # uninstall application deps
 yum -y remove postgresql-devel emysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-sasl-devel python36-devel && \
