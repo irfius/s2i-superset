@@ -16,9 +16,7 @@ COPY .s2i/bin/ /usr/libexec/s2i
 COPY requirements/ /superset
 WORKDIR /superset
 
-RUN yum -y update && \
-    rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 && \
-    yum -y install --setopt=tsflags=nodocs epel-release && \
+RUN yum -y install epel-release && \
     yum -y update && \
     INSTALL_PKGS="python36 python36-pip python36-devel" && \
     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
