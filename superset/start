@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+cmd="$1"
+
+case $cmd in 
+    "usage")
+        echo "print usage!"
+        ;;
+    "superset-init")
+        echo "Running superset initialzations scripts"
+        ;;
+    "superset")
+        echo "Running superset with Gunicorn"
+        ;;
+    *)
+        echo "Running bash"
+        exec /bin/bash
+        ;;
+esac

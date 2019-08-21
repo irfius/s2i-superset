@@ -1,24 +1,9 @@
-#!/bin/bash
+#!/bin/bash -e
 
-echo "---> Running conatiner..."
+echo "---> RUNning conatiner..."
 
-COMMAND=$0
+cmd=${cmd}
 
 source .venv/bin/activate
-source ./envs
 
-case $COMMAND in 
-    usage)
-        echo "print usage!"
-        ;;
-    superset-init)
-        echo "Running superset initialzations scripts"
-        ;;
-    superset)
-        echo "Running superset with Gunicorn"
-        ;;
-    *)
-        echo "Running bash"
-        exec /bin/bash
-        ;;
-esac
+exec /superset/start "$cmd"
