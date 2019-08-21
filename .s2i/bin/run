@@ -4,6 +4,4 @@ echo "---> RUNning conatiner..."
 
 cmd=${cmd}
 
-source .venv/bin/activate
-
 exec /superset/start "$cmd"
