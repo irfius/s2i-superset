@@ -2,6 +2,4 @@
 
 echo "---> RUNning conatiner..."
 
-cmd=${cmd}
-
-exec /superset/start "$cmd"
+exec /superset/start 

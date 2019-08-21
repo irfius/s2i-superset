@@ -1,20 +1,45 @@
 #!/bin/bash -e
 
-cmd="$1"
-
 case $cmd in 
     "usage")
-        echo "print usage!"
+        echo "Usage!"
+        /usr/libexec/s2i/usage
+        exit 0
         ;;
     "superset-init")
         echo "Running superset initialzations scripts"
+        source /superset/.venv/bin/activate
+        superset db upgrade
+        flask fab create-admin --username admin --firstname admin --lastname minda --email admin@example.com \
+            --password password
+        superset init
+        gunicorn \
+            -w 10 \
+            -k gevent \
+            --timeout 120 \
+            -b  0.0.0.0:6666 \
+            --limit-request-line 0 \
+            --limit-request-field_size 0 \
+            --statsd-host localhost:8125 \
+            superset:app
         ;;
     "superset")
         echo "Running superset with Gunicorn"
+        superset db upgrade
+        gunicorn \
+            -w 10 \
+            -k gevent \
+            --timeout 120 \
+            -b  0.0.0.0:6666 \
+            --limit-request-line 0 \
+            --limit-request-field_size 0 \
+            --statsd-host localhost:8125 \
+            superset:app
+        exit 0
         ;;
     *)
         echo "Running bash"
-        source .venv/bin/activate
+        source /superset/.venv/bin/activate
         exec /bin/bash
         ;;
 esac
