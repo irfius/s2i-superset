@@ -5,8 +5,8 @@ Apache Superset 0.28.1 on openshift
 To build this image locally with s2i:
 ```sh
 $ git pull https://github.com/irfius/s2i-superset.git
-$ docker build -t irfius/superset:0.28.1 .
-$ s2i build superset/ irfius/superset:0.28.1 s:1
+$ docker build -t irfius/openshift-superset:0.28.1 .
+$ s2i build superset/ irfius/openshift-superset:0.28.1 s2i-superset:1
 ```
 
 ### Running the application with docker-compose 
