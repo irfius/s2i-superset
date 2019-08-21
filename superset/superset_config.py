@@ -13,7 +13,7 @@ import sys
 
 from dateutil import tz
 from flask_appbuilder.security.manager import AUTH_DB
-
+from celery.schedules import crontab
 from superset.stats_logger import DummyStatsLogger
 
 # Realtime stats logger, a StatsD implementation exists
@@ -28,10 +28,10 @@ else:
 # ---------------------------------------------------------
 # Superset specific config
 # ---------------------------------------------------------
-PACKAGE_DIR = os.path.join(BASE_DIR, 'static', 'assets')
-PACKAGE_FILE = os.path.join(PACKAGE_DIR, 'package.json')
-with open(PACKAGE_FILE) as package_file:
-    VERSION_STRING = json.load(package_file)['version']
+# PACKAGE_DIR = os.path.join(BASE_DIR, 'static', 'assets')
+# PACKAGE_FILE = os.path.join(PACKAGE_DIR, 'package.json')
+# with open(PACKAGE_FILE) as package_file:
+#     VERSION_STRING = json.load(package_file)['version']
 
 ROW_LIMIT = 50000
 VIZ_ROW_LIMIT = 10000
@@ -51,9 +51,9 @@ FAB_UPDATE_PERMS = False
 SECRET_KEY = "4T;*%Q97&7vg;=nI3`Gx:Ex1dI-w:["  # noqa
 
 # The SQLAlchemy connection string.
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATA_DIR, 'superset.db')
+# SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATA_DIR, 'superset.db')
 # SQLALCHEMY_DATABASE_URI = 'mysql://myapp@localhost/myapp'
-# SQLALCHEMY_DATABASE_URI = 'postgresql://pg_user:pg_password@postgres/myapp'
+SQLALCHEMY_DATABASE_URI = 'postgresql://pg_user:pg_password@superset-postgres/superset'
 
 # In order to hook up a custom password store for all SQLACHEMY connections
 # implement a function that takes a single argument of type 'sqla.engine.url',
@@ -287,19 +287,43 @@ WARNING_MSG = None
 # Default celery config is to use SQLA as a broker, in a production setting
 # you'll want to use a proper broker as specified here:
 # http://docs.celeryproject.org/en/latest/getting-started/brokers/index.html
-"""
-# Example:
+
 class CeleryConfig(object):
-  BROKER_URL = 'sqla+sqlite:///celerydb.sqlite'
-  CELERY_IMPORTS = ('superset.sql_lab', )
-  CELERY_RESULT_BACKEND = 'db+sqlite:///celery_results.sqlite'
-  CELERY_ANNOTATIONS = {'tasks.add': {'rate_limit': '10/s'}}
-  CELERYD_LOG_LEVEL = 'DEBUG'
-  CELERYD_PREFETCH_MULTIPLIER = 1
-  CELERY_ACKS_LATE = True
+    BROKER_URL = 'redis://superset-redis:6379/0'
+    CELERY_IMPORTS = (
+        'superset.sql_lab',
+        'superset.tasks',
+    )
+    CELERY_RESULT_BACKEND = 'redis://superset-redis:6379/0'
+    CELERY_ANNOTATIONS = {'tasks.add': {'rate_limit': '10/s'}}
+    CELERYD_LOG_LEVEL = 'DEBUG'
+    CELERYD_PREFETCH_MULTIPLIER = 10
+    CELERY_ACKS_LATE = True
+    CELERY_ANNOTATIONS = {
+        'sql_lab.get_sql_results': {
+            'rate_limit': '100/s',
+        },
+        'email_reports.send': {
+            'rate_limit': '1/s',
+            'time_limit': 120,
+            'soft_time_limit': 150,
+            'ignore_result': True,
+        },
+    }
+    CELERYBEAT_SCHEDULE = {
+        'cache-warmup-hourly': {
+            'task': 'cache-warmup',
+            'schedule': crontab(minute=0, hour='*'),  # hourly
+            'kwargs': {
+                'strategy_name': 'top_n_dashboards',
+                'top_n': 5,
+                'since': '7 days ago',
+            },
+        },
+    }    
+
 CELERY_CONFIG = CeleryConfig
-"""
-CELERY_CONFIG = None
+# CELERY_CONFIG = None
 
 # static http headers to be served by your Superset server.
 # This header prevents iFrames from other domains and
@@ -441,24 +465,24 @@ SQL_QUERY_MUTATOR = None
 # using flask-compress
 ENABLE_FLASK_COMPRESS = True
 
-try:
-    if CONFIG_PATH_ENV_VAR in os.environ:
-        # Explicitly import config module that is not in pythonpath; useful
-        # for case where app is being executed via pex.
-        print('Loaded your LOCAL configuration at [{}]'.format(
-            os.environ[CONFIG_PATH_ENV_VAR]))
-        module = sys.modules[__name__]
-        override_conf = imp.load_source(
-            'superset_config',
-            os.environ[CONFIG_PATH_ENV_VAR])
-        for key in dir(override_conf):
-            if key.isupper():
-                setattr(module, key, getattr(override_conf, key))
+# try:
+#     if CONFIG_PATH_ENV_VAR in os.environ:
+#         # Explicitly import config module that is not in pythonpath; useful
+#         # for case where app is being executed via pex.
+#         print('Loaded your LOCAL configuration at [{}]'.format(
+#             os.environ[CONFIG_PATH_ENV_VAR]))
+#         module = sys.modules[__name__]
+#         override_conf = imp.load_source(
+#             'superset_config',
+#             os.environ[CONFIG_PATH_ENV_VAR])
+#         for key in dir(override_conf):
+#             if key.isupper():
+#                 setattr(module, key, getattr(override_conf, key))
 
-    else:
-        from superset_config import *  # noqa
-        import superset_config
-        print('Loaded your LOCAL configuration at [{}]'.format(
-            superset_config.__file__))
-except ImportError:
-    pass
+#     else:
+#         from superset_config import *  # noqa
+#         import superset_config
+#         print('Loaded your LOCAL configuration at [{}]'.format(
+#             superset_config.__file__))
+# except ImportError:
+#     pass
