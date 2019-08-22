@@ -8,7 +8,7 @@ ENV LC_ALL=en_US.UTF-8 \
 
 LABEL io.k8s.description="Apache Superset" \
       io.k8s.display-name="Apache Superset 0.28.1" \
-      io.openshift.expose-services="8080:http,8125:http,6666:http" \
+      io.openshift.expose-services="8088:http,8125:http,6666:http" \
       io.openshift.tags="superset,python,apache" \
       maintainer="Irfius <irfius@tuta.io>" \
       io.openshift.s2i.scripts-url="image:///usr/libexec/s2i"
@@ -36,5 +36,5 @@ RUN yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     yum -y clean all --enablerepo='*'
 
 USER 1001
-EXPOSE 8080 8125 6666
+EXPOSE 8088 8125 6666
 CMD ["/usr/libexec/s2i/usage"]

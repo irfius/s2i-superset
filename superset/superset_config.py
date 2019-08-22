@@ -25,6 +25,10 @@ if 'SUPERSET_HOME' in os.environ:
 else:
     DATA_DIR = os.path.join(os.path.expanduser('~'), '.superset')
 
+POSTGRESQL_USER = os.environ.get("POSTGRESQL_USER", "")
+POSTGRESQL_PASSWORD = os.environ.get("POSTGRESQL_PASSWORD", "")
+POSTGRESQL_DATABASE = os.environ.get("POSTGRESQL_DATABASE", "")
+
 # ---------------------------------------------------------
 # Superset specific config
 # ---------------------------------------------------------
@@ -53,7 +57,7 @@ SECRET_KEY = "4T;*%Q97&7vg;=nI3`Gx:Ex1dI-w:["  # noqa
 # The SQLAlchemy connection string.
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(DATA_DIR, 'superset.db')
 # SQLALCHEMY_DATABASE_URI = 'mysql://myapp@localhost/myapp'
-SQLALCHEMY_DATABASE_URI = 'postgresql://pg_user:pg_password@superset-postgres/superset'
+SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@superset-postgres:5432/%s' % (POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE)
 
 # In order to hook up a custom password store for all SQLACHEMY connections
 # implement a function that takes a single argument of type 'sqla.engine.url',
@@ -478,7 +482,6 @@ ENABLE_FLASK_COMPRESS = True
 #         for key in dir(override_conf):
 #             if key.isupper():
 #                 setattr(module, key, getattr(override_conf, key))
-
 #     else:
 #         from superset_config import *  # noqa
 #         import superset_config
