@@ -36,7 +36,6 @@ case $cmd in
             --limit-request-field_size 0 \
             --statsd-host 0.0.0.0:8125 \
             superset:app
-        exit 0
         ;;
     *)
         echo "Running bash"
