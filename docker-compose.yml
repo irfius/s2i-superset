@@ -22,7 +22,7 @@ services:
     ports: 
       - "6379:6379"
   superset:
-    image: irfius/s2i-superset:0.28.1
+    image: irfius/s2i-superset:0.34.0
     environment: 
       - cmd=superset-init
       - POSTGRESQL_USER=superset_user
