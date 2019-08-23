@@ -3,12 +3,12 @@ FROM centos:7.6.1810
 ENV LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     FLASK_APP=superset \
-    APACHE_SUPERSET_VERSION=0.28.1 \
+    APACHE_SUPERSET_VERSION=0.34.0 \
     SUPERSET_HOME=/superset
 
 LABEL io.k8s.description="Apache Superset" \
-      io.k8s.display-name="Apache Superset 0.28.1" \
-      io.openshift.expose-services="8088:http,8125:http,6666:http" \
+      io.k8s.display-name="Apache Superset 0.34.0" \
+      io.openshift.expose-services="8088:http,8125:http,8081:http" \
       io.openshift.tags="superset,python,apache" \
       maintainer="Irfius <irfius@tuta.io>" \
       io.openshift.s2i.scripts-url="image:///usr/libexec/s2i"
