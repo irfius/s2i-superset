@@ -7,11 +7,10 @@ case $cmd in
         exit 0
         ;;
     "superset-init")
-        echo "Running superset initialzations scripts ->>> $fab_username $fab_password"
+        echo "Running superset initialzations scripts"
         source /superset/.venv/bin/activate
         superset db upgrade
-        fabmanager create-admin --app $FLASK_APP \
-            --username $fab_username \
+        flask fab create-admin --username $fab_username \
             --firstname $fab_firstname --lastname $fab_lastname --email $fab_email \
             --password $fab_password
         superset init
@@ -22,6 +21,7 @@ case $cmd in
             -b  0.0.0.0:6666 \
             --limit-request-line 0 \
             --limit-request-field_size 0 \
+            --statsd-host 0.0.0.0:8125 \
             superset:app
         ;;
     "superset")
@@ -34,6 +34,7 @@ case $cmd in
             -b  0.0.0.0:6666 \
             --limit-request-line 0 \
             --limit-request-field_size 0 \
+            --statsd-host 0.0.0.0:8125 \
             superset:app
         ;;
     *)

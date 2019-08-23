@@ -29,12 +29,14 @@ services:
       - POSTGRESQL_PASSWORD=superset_password
       - POSTGRESQL_DATABASE=superset
       - fab_username=admin
-      - fab_firstname=Testy
-      - fab_lastname=McTester
-      - fab_email=testy@example.com
-      - fab_password=lolol
+      - fab_firstname=admin
+      - fab_lastname=minda
+      - fab_email=admin@example.com
+      - fab_password=password
     ports: 
+      - "8088:8088"
       - "8081:6666"
+      - "8125:8125"
     links: 
       - superset-postgres
       - superset-redis
