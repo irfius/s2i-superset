@@ -28,6 +28,8 @@ services:
       - POSTGRESQL_USER=superset_user
       - POSTGRESQL_PASSWORD=superset_password
       - POSTGRESQL_DATABASE=superset
+      - POSTGRESQL_HOST=superset-postgres
+      - REDIS_HOST=superset-redis
       - fab_username=admin
       - fab_firstname=admin
       - fab_lastname=minda
@@ -35,7 +37,7 @@ services:
       - fab_password=password
     ports: 
       - "8088:8088"
-      - "8081:6666"
+      - "8081:8081"
       - "8125:8125"
     links: 
       - superset-postgres

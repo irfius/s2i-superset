@@ -39,6 +39,8 @@ from superset.stats_logger import DummyStatsLogger
 STATS_LOGGER = DummyStatsLogger()
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+CURRENT_DIR = os.getcwd()
+
 if "SUPERSET_HOME" in os.environ:
     DATA_DIR = os.environ["SUPERSET_HOME"]
 else:
@@ -56,8 +58,8 @@ ROW_LIMIT = 50000
 VIZ_ROW_LIMIT = 10000
 # max rows retrieved by filter select auto complete
 FILTER_SELECT_ROW_LIMIT = 10000
-SUPERSET_WORKERS = 2  # deprecated
-SUPERSET_CELERY_WORKERS = 32  # deprecated
+# SUPERSET_WORKERS = 2  # deprecated
+# SUPERSET_CELERY_WORKERS = 32  # deprecated
 
 SUPERSET_WEBSERVER_ADDRESS = "0.0.0.0"
 SUPERSET_WEBSERVER_PORT = 8088
@@ -77,8 +79,14 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # Your App secret key
 SECRET_KEY = "\2\1thisismyscretkey\1\2\e\y\y\h"  # noqa
 
+POSTGRESQL_USER = os.environ.get("POSTGRESQL_USER")
+POSTGRESQL_PASSWORD = os.environ.get("POSTGRESQL_PASSWORD")
+POSTGRESQL_DATABASE = os.environ.get("POSTGRESQL_DATABASE")
+POSTGRESQL_HOST = os.environ.get("POSTGRESQL_HOST")
+
+SQLALCHEMY_DATABASE_URI = f"postgresql://{POSTGRESQL_USER}:{POSTGRESQL_PASSWORD}@{POSTGRESQL_HOST}/{POSTGRESQL_DATABASE}"
 # The SQLAlchemy connection string.
-SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(DATA_DIR, "superset.db")
+# SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(DATA_DIR, "superset.db")
 # SQLALCHEMY_DATABASE_URI = 'mysql://myapp@localhost/myapp'
 # SQLALCHEMY_DATABASE_URI = 'postgresql://root:password@localhost/myapp'
 
@@ -101,7 +109,8 @@ WTF_CSRF_ENABLED = True
 WTF_CSRF_EXEMPT_LIST = ["superset.views.core.log"]
 
 # Whether to run the web server in debug mode or not
-DEBUG = os.environ.get("FLASK_ENV") == "development"
+# DEBUG = os.environ.get("FLASK_ENV") == "development"
+DEBUG = False
 FLASK_USE_RELOAD = True
 
 # Superset allows server-side python stacktraces to be surfaced to the
@@ -185,15 +194,7 @@ BABEL_DEFAULT_FOLDER = "superset/translations"
 # The allowed translation for you app
 LANGUAGES = {
     "en": {"flag": "us", "name": "English"},
-    "it": {"flag": "it", "name": "Italian"},
-    "fr": {"flag": "fr", "name": "French"},
-    "zh": {"flag": "cn", "name": "Chinese"},
-    "ja": {"flag": "jp", "name": "Japanese"},
-    "de": {"flag": "de", "name": "German"},
-    "pt": {"flag": "pt", "name": "Portuguese"},
     "pt_BR": {"flag": "br", "name": "Brazilian Portuguese"},
-    "ru": {"flag": "ru", "name": "Russian"},
-    "ko": {"flag": "kr", "name": "Korean"},
 }
 
 # ---------------------------------------------------
@@ -230,13 +231,13 @@ GET_FEATURE_FLAGS_FUNC = None
 # Image and file configuration
 # ---------------------------------------------------
 # The file upload folder, when using models with files
-UPLOAD_FOLDER = BASE_DIR + "/app/static/uploads/"
+UPLOAD_FOLDER = CURRENT_DIR + "/app/static/uploads/"
 
 # The image upload folder, when using models with images
-IMG_UPLOAD_FOLDER = BASE_DIR + "/app/static/uploads/"
+IMG_UPLOAD_FOLDER = CURRENT_DIR + "/app/static/uploads/"
 
 # The image upload url, when using models with images
-IMG_UPLOAD_URL = "/static/uploads/"
+IMG_UPLOAD_URL = CURRENT_DIR + "/static/uploads/"
 # Setup image size default is (300, 200, True)
 # IMG_SIZE = (300, 200, True)
 
@@ -329,7 +330,7 @@ LOG_LEVEL = "DEBUG"
 
 ENABLE_TIME_ROTATE = False
 TIME_ROTATE_LOG_LEVEL = "DEBUG"
-FILENAME = os.path.join(DATA_DIR, "superset.log")
+FILENAME = os.path.join(CURRENT_DIR, "superset.log")
 ROLLOVER = "midnight"
 INTERVAL = 1
 BACKUP_COUNT = 30
@@ -380,13 +381,14 @@ WARNING_MSG = None
 # you'll want to use a proper broker as specified here:
 # http://docs.celeryproject.org/en/latest/getting-started/brokers/index.html
 
+REDIS_HOST = os.environ.get("REDIS_HOST")
 
 class CeleryConfig(object):
-    BROKER_URL = "sqla+sqlite:///celerydb.sqlite"
+    BROKER_URL = f"redis://{REDIS_HOST}:6379/0"
     CELERY_IMPORTS = ("superset.sql_lab", "superset.tasks")
-    CELERY_RESULT_BACKEND = "db+sqlite:///celery_results.sqlite"
+    CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:6379/0"
     CELERYD_LOG_LEVEL = "DEBUG"
-    CELERYD_PREFETCH_MULTIPLIER = 1
+    CELERYD_PREFETCH_MULTIPLIER = 10
     CELERY_ACKS_LATE = True
     CELERY_ANNOTATIONS = {
         "sql_lab.get_sql_results": {"rate_limit": "100/s"},
@@ -398,9 +400,14 @@ class CeleryConfig(object):
         },
     }
     CELERYBEAT_SCHEDULE = {
-        "email_reports.schedule_hourly": {
-            "task": "email_reports.schedule_hourly",
-            "schedule": crontab(minute=1, hour="*"),
+        "cache-warmup-hourly": {
+            "task": "cache-warmup",
+            "schedule": crontab(minute=0, hour="*"),
+            "kwargs": {
+                "strategy_name": "top_n_dashboards",
+                "top_n": 5,
+                "since": "7 days ago"
+            }
         }
     }
 
@@ -412,7 +419,7 @@ CELERY_CONFIG = CeleryConfig
 
 # Additional static HTTP headers to be served by your Superset server. Note
 # Flask-Talisman aplies the relevant security HTTP headers.
-HTTP_HEADERS = {}
+HTTP_HEADERS = {'X-Frame-Options': 'SAMEORIGIN'}
 
 # The db id here results in selecting this one as a default in SQL Lab
 DEFAULT_DB_ID = None
