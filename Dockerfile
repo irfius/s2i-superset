@@ -20,7 +20,7 @@ LABEL io.k8s.description="Apache Superset" \
 
 WORKDIR /superset
 COPY .s2i/bin/ /usr/libexec/s2i
-COPY Pipfile /superset
+COPY --chown=1001:1001 Pipfile /superset
 
 RUN curl https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server -o /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7Server && \
     curl https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 && \ 
