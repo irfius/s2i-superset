@@ -9,7 +9,7 @@ ENV LC_ALL=en_US.UTF-8 \
     PY368="python36 python36-pip python36-devel" \
     PIPENV_VENV_IN_PROJECT=yes \
     PATH=/superset/bin:$PATH \
-    PYTHONPATH=/superset/:
+    PYTHONPATH=/
 
 LABEL io.k8s.description="Apache Superset" \
       io.k8s.display-name="Apache Superset 0.34.0" \
