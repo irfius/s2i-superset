@@ -1,5 +1,5 @@
 # s2i-superset
-Apache Superset 0.28.1 on openshift
+Apache Superset 0.34.0 on openshift
 
 ### To build Build
 To build this image locally with s2i:

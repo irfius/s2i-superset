@@ -16,6 +16,6 @@ fi
 # move the application source
 echo "---> Building and installing application from source..."
 chmod +x /tmp/src/*
-mv /tmp/src/* /superset
+mv /tmp/src/* /app/superset
 
 echo "---> Assemble END"

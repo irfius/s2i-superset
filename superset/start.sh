@@ -9,22 +9,21 @@ case $cmd in
     "superset-init")
         echo "Running superset initialzations scripts"
         # pipenv shell
-        superset db upgrade
-        flask fab create-admin \
+        pipenv run superset db upgrade && 
+        pipenv run flask fab create-admin \
             --username $fab_username \
             --firstname $fab_firstname \
             --lastname $fab_lastname \
             --email $fab_email \
-            --password $fab_password
-        superset init
-        gunicorn \
+            --password $fab_password &&
+        pipenv run superset init &&
+        pipenv run gunicorn \
             -w 4 \
             -k gevent \
             --timeout 120 \
             -b  0.0.0.0:8081 \
             --limit-request-line 0 \
             --limit-request-field_size 0 \
-            --statsd-host 0.0.0.0:8125 \
             superset:app
         ;;
     "superset")
@@ -38,7 +37,6 @@ case $cmd in
             -b  0.0.0.0:8081 \
             --limit-request-line 0 \
             --limit-request-field_size 0 \
-            --statsd-host 0.0.0.0:8125 \
             superset:app
         ;;
     *)
