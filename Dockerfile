@@ -6,10 +6,9 @@ ENV LC_ALL=en_US.UTF-8 \
     APACHE_SUPERSET_VERSION=0.34.0 \
     SUPERSET_HOME=/superset \
     PY_DEPS="postgresql-devel mysql-devel gcc gcc-c++ cyrus-sasl-plain cyrus-sasl-devel" \
-    PY368="python36 python36-pip python36-devel" \
+    PY368="python36 python36-pip python36-devel which" \
     PIPENV_VENV_IN_PROJECT=yes \
-    PATH=/superset/bin:$PATH \
-    PYTHONPATH=/
+    PIPENV_YES=yes
 
 LABEL io.k8s.description="Apache Superset" \
       io.k8s.display-name="Apache Superset 0.34.0" \
@@ -36,6 +35,7 @@ RUN curl https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server -o /etc/
     chown -R 1001:1001 /var/lib/rpm/.dbenv.lock && \
     yum -y remove $PY_DEPS && \
     yum -y clean all --enablerepo='*'
+
 
 USER 1001
 EXPOSE 8088 8125 8081

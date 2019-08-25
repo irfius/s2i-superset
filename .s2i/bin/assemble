@@ -10,7 +10,7 @@ fi
 # Restore artifacts from the previous build (if they exist).
 if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
   echo "---> Restoring build artifacts..."
-  mv /tmp/artifacts/* /etc/nginx
+  mv /tmp/artifacts/* /etc/superset-artifacts
 fi
 
 # move the application source

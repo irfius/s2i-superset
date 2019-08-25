@@ -2,4 +2,4 @@
 
 echo "---> RUNning conatiner..."
 
-exec /superset/start.sh
+/superset/start.sh
